@@ -1,11 +1,15 @@
+var isPressed = false;
+
 function startGame() {
     myGameArea.start();
 
-    myGameBackground = new component(800, 500, "lightBlue", 0, 0);
-    myGamePiece = new component(50, 90, "black", 40, 390);
-    myGameFloor = new component(800, 20, "Brown", 0, 480);
+    myGameBackground = new Component(800, 500, "lightBlue", 0, 0);
+    myGamePiece = new Component(50, 90, "black", 40, 390);
+    myGameFloor = new Component(800, 20, "Brown", 0, 480);
 
     myGamePiece.gravity = 0.05;
+
+    setupKeys();
 }
 
 var myGameArea = {
@@ -33,19 +37,17 @@ var myGameArea = {
 //     ctx.fillRect(this.x, this.y, this.width, this.height);
 // }
 
-
-
-
-
-function component(width, height, color, x, y) {
+function Component(width, height, color, x, y) {
     this.width = width;
     this.height = height;
     this.x = x;
     this.y = y;
-    this.speedX = 0;
     this.speedY = 0;
     this.gravity = 0.05;
     this.gravitySpeed = 0;
+
+    this.isMoving = false;
+
     this.update = function() {
         ctx = myGameArea.context;
         ctx.fillStyle = color;
@@ -53,38 +55,86 @@ function component(width, height, color, x, y) {
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
-        this.x += this.speedX;
-        this.y += this.speedY;
-
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
     }
+
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - myGamePiece.height - myGameFloor.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            this.gravitySpeed = 0;
+            this.isMoving = false;
+        }
+      }
+
+    // this.jump = function(){
+    //   document.onkeyup = function(e){
+    //     switch (e.keyCode) {
+    //       case 38:
+    //         myGamePiece.gravity = 0.9;
+    //         break;
+    //     }
+    //     document.onkeydown = function(e){
+    //       switch (e.keyCode) {
+    //       case 38:
+    //        myGamePiece.gravity = -4;
+    //      }
+    //     }
+    //
+    //   }
+    //   .bind(this);
+    // }
+
+
+    // this.down = function(){
+    //   document.onkeyup = function(e){
+    //     switch (e.keyCode) {
+    //       case 40:
+    //         myGamePiece.height = 45;
+    //         break;
+    //     }
+    //   }
+    //   .bind(this);
+    // }
+
+
 }
 
 function updateGameArea() {
     myGameArea.clear();
-    myGamePiece.newPos();
-    myGamePiece.update();
-}
-
-function moveup() {
-  console.log("up")
-    myGamePiece.speedY -= 1;
-}
-
-function movedown() {
-  console.log("down")
-    myGamePiece.speedY += 1;
-}
-
-function updateGameArea() {
-    myGameArea.clear();
-    // myGamePiece.speedX = 0;
-    // myGamePiece.speedY = 0;
-    // if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -1; }
-    // if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 1; }
     myGameBackground.update();
     myGameFloor.update();
     myGamePiece.newPos();
     myGamePiece.update();
+    //myGamePiece.jump();
+    // myGamePiece.down();
+
+}
+
+function accelerate(n) {
+    myGamePiece.gravity = n;
+
+}
+
+function setupKeys() {
+  document.onkeyup = function(e){
+    switch (e.keyCode) {
+      case 38:
+          myGamePiece.gravity = 0.9;
+          myGamePiece.isMoving = true;
+        break;
+    }
+  }
+  document.onkeydown = function(e){
+    switch (e.keyCode) {
+    case 38:
+      if (!myGamePiece.isMoving) {
+        myGamePiece.gravity = -4;
+      }
+      break;
+   }
+  }
 }
 
 startGame();
