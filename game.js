@@ -133,7 +133,7 @@ function updateGameArea() {
         y = myGameArea.canvas.height - 200;
   // Aquí está el problema lo de abajo me sale que no es una función
   //(he probado ha cambair metiedo los datos en push de GameObstacle)
-        myGameObstacle.push();
+        // myGameObstacle.push();
 
     }
     for (i = 0; i < myGameObstacle.length; i += 1) {
@@ -142,6 +142,7 @@ function updateGameArea() {
     }
 
     myGameArea.clear();
+    myGameObstacle.x += -7;
     myGameBackground.update();
     myGameFloor.update();
     myGamePiece.newPos();
