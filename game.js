@@ -1,10 +1,12 @@
 var isPressed = false;
+var myGameObstacle = [];
+
 
 function startGame() {
     myGameArea.start();
 
     myGameBackground = new Component(800, 500, "#9DD9D2", 0, 0);
-    myGamePiece = new Component(50, 90, "#23395B", 40, 390);
+    myGamePiece = new Player(50, 90, "#23395B", 40, 390);
     myGameFloor = new Component(800, 20, "#EE6055", 0, 480);
     myGameObstacle = new  Component(30, 90, "#2CA58D", 520, 390);
 
@@ -25,14 +27,14 @@ var myGameArea = {
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+    },
 
-    // stop : function(){
-    //   clearInterval(this.interval);
-    // }
+    stop : function(){
+      clearInterval(this.interval);
+    }
 }
 
-// function component(width, height, color, x, y) {
+// function Player(width, height, color, x, y) {
 //     this.width = width;
 //     this.height = height;
 //     this.x = x;
@@ -42,7 +44,7 @@ var myGameArea = {
 //     ctx.fillRect(this.x, this.y, this.width, this.height);
 // }
 
-function Component(width, height, color, x, y) {
+function Player(width, height, color, x, y) {
     this.width = width;
     this.height = height;
     this.x = x;
@@ -76,49 +78,84 @@ function Component(width, height, color, x, y) {
         }
       }
 
-    // this.jump = function(){
-    //   document.onkeyup = function(e){
-    //     switch (e.keyCode) {
-    //       case 38:
-    //         myGamePiece.gravity = 0.9;
-    //         break;
-    //     }
-    //     document.onkeydown = function(e){
-    //       switch (e.keyCode) {
-    //       case 38:
-    //        myGamePiece.gravity = -4;
-    //      }
-    //     }
-    //
-    //   }
-    //   .bind(this);
-    // }
+}
 
+function Component(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;
+    this.speedY = 0;
 
-    // this.down = function(){
-    //   document.onkeyup = function(e){
-    //     switch (e.keyCode) {
-    //       case 40:
-    //         myGamePiece.height = 45;
-    //         break;
-    //     }
-    //   }
-    //   .bind(this);
-    // }
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    this.newPos = function() {
 
+        this.gravitySpeed += this.gravity;
+        this.y += this.speedY + this.gravitySpeed;
+    }
+    this.crashWith = function(otherobj) {
+       var myleft = this.x;
+       var myright = this.x + (this.width);
+       var mytop = this.y;
+       var mybottom = this.y + (this.height);
+       var otherleft = otherobj.x;
+       var otherright = otherobj.x + (otherobj.width);
+       var othertop = otherobj.y;
+       var otherbottom = otherobj.y + (otherobj.height);
+       var crash = true;
+       if ((mybottom < othertop) ||
+              (mytop > otherbottom) ||
+              (myright < otherleft) ||
+              (myleft > otherright)) {
+          crash = false;
+       }
+       return crash;
+   }
 
 }
 
 function updateGameArea() {
+  var x, y;
+    for (i = 0; i < myGameObstacle.length; i += 1) {
+        if (myGamePiece.crashWith(myGameObstacle[i])) {
+            myGameArea.stop();
+            return;
+        }
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        y = myGameArea.canvas.height - 200;
+  // Aquí está el problema lo de abajo me sale que no es una función
+  //(he probado ha cambair metiedo los datos en push de GameObstacle)
+        myGameObstacle.push();
+
+    }
+    for (i = 0; i < myGameObstacle.length; i += 1) {
+        myGameObstacle[i].x += -1;
+        myGameObstacle[i].update();
+    }
+
     myGameArea.clear();
     myGameBackground.update();
     myGameFloor.update();
     myGamePiece.newPos();
     myGamePiece.update();
     myGameObstacle.update();
+    // myGameObstacle.crashWith();
     //myGamePiece.jump();
     // myGamePiece.down();
 
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
 }
 
 function accelerate(n) {
