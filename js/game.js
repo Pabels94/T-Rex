@@ -1,107 +1,87 @@
 var isPressed = false;
+var canvas;
+
+$(document).ready(function(){
+  startGame();
+})
+
+
 
 function startGame() {
-    myGameArea.start();
+  canvas = document.createElement("canvas");
+  canvas.width = 800;
+  canvas.height = 500;
+  context = canvas.getContext("2d");
+  document.body.insertBefore(canvas, document.body.childNodes[0]);
 
-    myGameBackground = new Component(800, 500, "#9DD9D2", 0, 0);
-    myGamePiece = new Component(50, 90, "#23395B", 40, 390);
-    myGameFloor = new Component(800, 20, "#EE6055", 0, 480);
-
-    myGamePiece.gravity = 0.05;
-
-    setupKeys();
+  var game = new Game(context);
+  game.setupKeys();
+  game.start();
 }
 
-var myGameArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = 800;
-        this.canvas.height = 500;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 20);
-    },
-    clear : function() {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+function Game (ctx, width, height) {
+  this.ctx = ctx;
+  this.width = width;
+  this.height = height;
+  this.background = null;
+  this.piece = null;
+  this.floor = null;
 
 }
 
-
-function Component(width, height, color, x, y) {
-    this.width = width;
-    this.height = height;
-    this.x = x;
-    this.y = y;
-    this.speedY = 0;
-    this.gravity = -1.8;
-    this.gravitySpeed = 0;
-
-    this.isJumping = false;
-
-    this.update = function() {
-        ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-    this.newPos = function() {
-
-        this.gravitySpeed += this.gravity;
-        this.y += this.speedY + this.gravitySpeed;
-
-        this.hitBottom();
-    }
-
-    this.hitBottom = function() {
-        var rockbottom = myGameArea.canvas.height - myGamePiece.height - myGameFloor.height;
-        if (this.y > rockbottom) {
-            this.y = rockbottom;
-            this.gravitySpeed = 0;
-            this.isJumping = false;
-
-        }
-      }
+Game.prototype.start = function() {
+  this.frameNo = 0;
+  this.interval = setInterval(this.update.bind(this), 20);
+  this.background = new Component(800, 500, "#9DD9D2", 0, 0, this.ctx);
+  this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx);
+  this.floor = new Component(800, 20, "#EE6055", 0, 480, this.ctx);
+  this.piece.gravity = 0.05;
 }
 
-function updateGameArea() {
-    myGameArea.clear();
-    myGameBackground.update();
-    myGameFloor.update();
-    myGamePiece.newPos();
-    myGamePiece.update();
-
+Game.prototype.clear = function() {
+  this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-function accelerate(n) {
-    myGamePiece.gravity = n;
-
+Game.prototype.update = function () {
+  this.clear();
+  this.background.update();
+  this.floor.update();
+  this.piece.hitBottom(canvas, this.piece, this.floor);
+  this.piece.newPos();
+  this.piece.update();
 }
 
-function setupKeys() {
+Game.prototype.accelerate = function (n) {
+    this.piece.gravity = n;
+}
+
+Game.prototype.setupKeys = function () {
   document.onkeyup  = function(e){
     switch (e.keyCode) {
       case 38:
-          if ( myGamePiece.isJumping === false) {
-            myGamePiece.gravity = -1.8;
-            myGamePiece.isJumping = true;
-            setTimeout(function(){
-              myGamePiece.gravity = 2.8;
-            }, 250)
-          }
+        console.log('38', this.piece.isJumping);
+        if ( !this.piece.isJumping ) {
+          console.log('inside if')
+          this.piece.gravity = -1.8;
+          this.piece.isJumping = true;
+          setTimeout(function(){
+            this.piece.gravity = 2.8;
+          }.bind(this), 250)
+        }
         break;
 
-        case 32:
-            if ( myGamePiece.isJumping === false) {
-              myGamePiece.gravity = -1.8;
-              myGamePiece.isJumping = true;
-              setTimeout(function(){
-                myGamePiece.gravity = 2.8;
-              }, 250)
-            }
-          break;
+      case 32:
+        console.log('32');
+        if ( !this.piece.isJumping ) {
+          this.piece.gravity = -1.8;
+          this.piece.isJumping = true;
+          setTimeout(function(){
+            this.piece.gravity = 2.8;
+          }.bind(this), 250)
+        }
+        break;
     }
-  }
+  }.bind(this)
   // document.onkeydown = function(e){
   //   switch (e.keyCode) {
   //   case 38:
@@ -112,8 +92,6 @@ function setupKeys() {
   //  }
   // }
 }
-
-startGame();
 
 
 
