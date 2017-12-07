@@ -1,5 +1,6 @@
 var isPressed = false;
 var canvas;
+var intervalGame = undefined;
 
 $(document).ready(function(){
   startGame();
@@ -26,15 +27,20 @@ function Game (ctx, width, height) {
   this.background = null;
   this.piece = null;
   this.floor = null;
+  this.obstacle = null;
+}
 
+Game.prototype.moveObject = function(object){
+  object.x += -7;
 }
 
 Game.prototype.start = function() {
   this.frameNo = 0;
   this.interval = setInterval(this.update.bind(this), 20);
   this.background = new Component(800, 500, "#9DD9D2", 0, 0, this.ctx);
-  this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx);
+  this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx, -1.8);
   this.floor = new Component(800, 20, "#EE6055", 0, 480, this.ctx);
+  this.obstacle = new Component(50,40, "black", 600, 440, this.ctx, 0);
   this.piece.gravity = 0.05;
 }
 
@@ -42,13 +48,46 @@ Game.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
+Game.prototype.stop = function() {
+  this.ctx.clearInterval(this.intervalGame);
+}
+
+Game.prototype.crashWith = function(element1, element2){
+  var myleft = element1.x;
+        var myright = element1.x + (element1.width);
+        var mytop = element1.y;
+        var mybottom = element1.y + (element1.height);
+        var otherleft = element2.x;
+        var otherright = element2.x + (element2.width);
+        var othertop = element2.y;
+        var otherbottom = element2.y + (element2.height);
+        var crash = true;
+        if ((mybottom < othertop) ||
+               (mytop > otherbottom) ||
+               (myright < otherleft) ||
+               (myleft > otherright)) {
+           crash = false;
+        }
+        return crash;
+}
+
 Game.prototype.update = function () {
+
+  if(this.crashWith(this.piece,this.obstacle)){
+    console.log('crash');
+    this.stop();
+  };
+
   this.clear();
   this.background.update();
   this.floor.update();
   this.piece.hitBottom(canvas, this.piece, this.floor);
   this.piece.newPos();
   this.piece.update();
+  this.moveObject(this.obstacle);
+  this.obstacle.newPos();
+  this.obstacle.update();
+
 }
 
 Game.prototype.accelerate = function (n) {
@@ -66,7 +105,7 @@ Game.prototype.setupKeys = function () {
           this.piece.isJumping = true;
           setTimeout(function(){
             this.piece.gravity = 2.8;
-          }.bind(this), 150)
+          }.bind(this), 250)
         }
         break;
 
@@ -77,7 +116,7 @@ Game.prototype.setupKeys = function () {
           this.piece.isJumping = true;
           setTimeout(function(){
             this.piece.gravity = 2.8;
-          }.bind(this), 150)
+          }.bind(this), 250)
         }
         break;
     }

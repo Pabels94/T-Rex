@@ -1,17 +1,17 @@
-function Component(width, height, color, x, y, ctx) {
+function Component(width, height, color, x, y, ctx, gravity) {
   this.width = width;
   this.height = height;
   this.x = x;
   this.y = y;
   this.color = color;
   this.speedY = 0;
-  this.gravity = -1.8;
+  this.gravity = gravity;
   this.gravitySpeed = 0;
-  this.isJumping = false;  
+  this.isJumping = false;
   this.ctx = ctx;
 }
 
-Component.prototype.update = function () { 
+Component.prototype.update = function () {
   this.ctx.fillStyle = this.color;
   this.ctx.fillRect(this.x, this.y, this.width, this.height);
 }
@@ -29,3 +29,5 @@ Component.prototype.hitBottom = function (canvas, myGamePiece, myGameFloor ) {
     this.isJumping = false;
   }
 }
+
+//*****************************************************************************
