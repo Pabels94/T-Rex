@@ -1,6 +1,5 @@
 var isPressed = false;
 var canvas;
-var intervalGame = undefined;
 
 $(document).ready(function(){
   startGame();
@@ -31,7 +30,7 @@ function Game (ctx, width, height) {
 }
 
 Game.prototype.moveObject = function(object){
-  object.x += -7;
+  object.x += -5;
 }
 
 Game.prototype.start = function() {
@@ -48,8 +47,10 @@ Game.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-Game.prototype.stop = function() {
-  this.ctx.clearInterval(this.intervalGame);
+Game.prototype.stopGameOver = function() {
+  // console.log("stop", this.interval )
+  clearInterval(this.interval);
+
 }
 
 Game.prototype.crashWith = function(element1, element2){
@@ -74,8 +75,7 @@ Game.prototype.crashWith = function(element1, element2){
 Game.prototype.update = function () {
 
   if(this.crashWith(this.piece,this.obstacle)){
-    console.log('crash');
-    this.stop();
+    this.stopGameOver();
   };
 
   this.clear();
