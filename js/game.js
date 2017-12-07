@@ -1,6 +1,7 @@
 var isPressed = false;
 var canvas;
 
+
 $(document).ready(function(){
   startGame();
 })
@@ -13,7 +14,7 @@ function startGame() {
   canvas.height = 500;
   context = canvas.getContext("2d");
   document.body.insertBefore(canvas, document.body.childNodes[0]);
-
+  this.frameNo = 0;
   var game = new Game(context);
   game.setupKeys();
   game.start();
@@ -26,11 +27,19 @@ function Game (ctx, width, height) {
   this.background = null;
   this.piece = null;
   this.floor = null;
-  this.obstacle = null;
+  // this.obstacle = null;
+  this.obstacles = [];
+}
+
+Game.prototype.obstacleGenerator = function(){
+  setInterval(function(){
+    var newObject = new Component(50,40, "black", 800, 440, this.ctx, 0);
+    this.obstacles.push(newObject);
+  }.bind(this),2000);
 }
 
 Game.prototype.moveObject = function(object){
-  object.x += -5;
+  object.x += -7;
 }
 
 Game.prototype.start = function() {
@@ -39,8 +48,9 @@ Game.prototype.start = function() {
   this.background = new Component(800, 500, "#9DD9D2", 0, 0, this.ctx);
   this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx, -1.8);
   this.floor = new Component(800, 20, "#EE6055", 0, 480, this.ctx);
-  this.obstacle = new Component(50,40, "black", 600, 440, this.ctx, 0);
+  // this.obstacle = new Component(50,40, "black", 600, 440, this.ctx, 0);
   this.piece.gravity = 0.05;
+  this.obstacleGenerator();
 }
 
 Game.prototype.clear = function() {
@@ -50,7 +60,6 @@ Game.prototype.clear = function() {
 Game.prototype.stopGameOver = function() {
   // console.log("stop", this.interval )
   clearInterval(this.interval);
-
 }
 
 Game.prototype.crashWith = function(element1, element2){
@@ -72,11 +81,20 @@ Game.prototype.crashWith = function(element1, element2){
         return crash;
 }
 
-Game.prototype.update = function () {
+Game.prototype.allObstacles = function(){
+  this.obstacles.forEach(function(e, i){
+  this.obstacles[i].update();
+  this.moveObject(this.obstacles[i]);
+}.bind(this));
+}
 
-  if(this.crashWith(this.piece,this.obstacle)){
+Game.prototype.update = function () {
+this.obstacles.forEach(function(e, i){
+  if(this.crashWith(this.piece,this.obstacles[i])){
     this.stopGameOver();
   };
+}.bind(this));
+
 
   this.clear();
   this.background.update();
@@ -84,9 +102,10 @@ Game.prototype.update = function () {
   this.piece.hitBottom(canvas, this.piece, this.floor);
   this.piece.newPos();
   this.piece.update();
-  this.moveObject(this.obstacle);
-  this.obstacle.newPos();
-  this.obstacle.update();
+  // this.moveObject(this.obstacle);
+  // this.obstacle.newPos();
+  // this.obstacle.update();
+  this.allObstacles();
 
 }
 
