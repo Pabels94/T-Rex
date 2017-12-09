@@ -8,7 +8,7 @@ $(document).ready(function(){
 
 function startGame() {
   canvas = document.createElement("canvas");
-  canvas.width = 800;
+  canvas.width = 1420;
   canvas.height = 500;
   context = canvas.getContext("2d");
   document.body.insertBefore(canvas, document.body.childNodes[0]);
@@ -33,26 +33,32 @@ function Game (ctx, width, height) {
 
 Game.prototype.obstacleGenerator = function(){
   setInterval(function(){
-    var newObject = new Component(50,50, "black", 800, 430, this.ctx, 0);
+    var newObject = new Component(50,50, "black", 1420, 430, this.ctx, 0);
     this.obstacles.push(newObject);
   }.bind(this),2000);
 
   setInterval(function(){
-    var newObject = new Component(40,70, "black", 800, 410, this.ctx, 0);
+    var newObject = new Component(40,70, "black", 1420, 410, this.ctx, 0);
     this.obstacles.push(newObject);
   }.bind(this),2970);
 }
 
 Game.prototype.moveObject = function(object, velocidad){
-  object.x -= velocidad;
+  object.x -= this.velocidad;
+
+  // setInterval(function(){
+  //     this.velocidad += 1;
+  // }.bind(this),5000);
+  // console.log(this.velocidad);
+
 };
 
 Game.prototype.start = function() {
   this.frameNo = 0;
   this.interval = setInterval(this.update.bind(this), 20);
-  this.background = new Component(800, 500, "#9DD9D2", 0, 0, this.ctx);
-  this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx, -1.8);
-  this.floor = new Component(800, 20, "#EE6055", 0, 480, this.ctx);
+  this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
+  this.piece = new Component(50, 90, "#23395B", 110, 390, this.ctx, -1.8);
+  this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
   this.piece.gravity = 0.05;
   this.obstacleGenerator();
 }
@@ -126,6 +132,9 @@ this.obstacles.forEach(function(e, i){
   // this.obstacle.update();
   this.allObstacles();
   this.counter++;
+  if(this.counter%500 === 0){
+    this.velocidad+=2;
+    console.log(this.velocidad)};
   this.ctx.fillStyle = "#23395B";
   this.ctx.font = "25px Arial";
   this.ctx.fillText(Math.floor(this.counter / 5),20,30);
@@ -158,10 +167,14 @@ Game.prototype.setupKeys = function () {
       case 32:
         console.log('32');
         if ( !this.piece.isJumping ) {
+          console.log('inside if')
+          if(this.piece.y < 300){
+            return false;
+          }
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
           setTimeout(function(){
-            this.piece.gravity = 2.8;
+            this.piece.gravity = 2.1;
           }.bind(this), 250)
         }
         break;
