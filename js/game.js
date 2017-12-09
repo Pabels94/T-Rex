@@ -29,6 +29,7 @@ function Game (ctx, width, height) {
   this.floor = null;
   // this.obstacle = null;
   this.obstacles = [];
+  this.velocidad = 9;
 }
 
 Game.prototype.obstacleGenerator = function(){
@@ -36,11 +37,16 @@ Game.prototype.obstacleGenerator = function(){
     var newObject = new Component(50,40, "black", 800, 440, this.ctx, 0);
     this.obstacles.push(newObject);
   }.bind(this),2000);
+
+  setInterval(function(){
+    var newObject = new Component(50,40, "green", 800, 440, this.ctx, 0);
+    this.obstacles.push(newObject);
+  }.bind(this),5000);
 }
 
-Game.prototype.moveObject = function(object){
-  object.x += -7;
-}
+Game.prototype.moveObject = function(object, velocidad){
+  object.x -= velocidad;
+};
 
 Game.prototype.start = function() {
   this.frameNo = 0;
@@ -82,9 +88,12 @@ Game.prototype.crashWith = function(element1, element2){
 }
 
 Game.prototype.allObstacles = function(){
-  this.obstacles.forEach(function(e, i){
-  this.obstacles[i].update();
-  this.moveObject(this.obstacles[i]);
+  this.obstacles.forEach(function(e, i, array){
+  e.update();
+  this.moveObject(e,this.velocidad);
+  if (e.x <= -40) {
+    array.splice(i,1);
+  }
 }.bind(this));
 }
 
@@ -93,6 +102,18 @@ this.obstacles.forEach(function(e, i){
   if(this.crashWith(this.piece,this.obstacles[i])){
     this.stopGameOver();
   };
+//   var velocidad = 9;
+//   var i=0;
+//   var intervalId = setInterval(function(){
+//   console.log(i);
+//   i++;
+//
+//   if(i %10 === 0){
+//     // clearInterval(intervalId);
+//   velocidad += 2;
+//   console.log("la velocidad es "+velocidad);
+//   }
+// },1000);
 }.bind(this));
 
 
