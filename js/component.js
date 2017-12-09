@@ -1,3 +1,4 @@
+
 function Component(width, height, color, x, y, ctx, gravity) {
   this.width = width;
   this.height = height;

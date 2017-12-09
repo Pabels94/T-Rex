@@ -6,8 +6,6 @@ $(document).ready(function(){
   startGame();
 })
 
-
-
 function startGame() {
   canvas = document.createElement("canvas");
   canvas.width = 800;
@@ -30,18 +28,19 @@ function Game (ctx, width, height) {
   // this.obstacle = null;
   this.obstacles = [];
   this.velocidad = 9;
+  this.counter = 0;
 }
 
 Game.prototype.obstacleGenerator = function(){
   setInterval(function(){
-    var newObject = new Component(50,40, "black", 800, 440, this.ctx, 0);
+    var newObject = new Component(50,50, "black", 800, 430, this.ctx, 0);
     this.obstacles.push(newObject);
   }.bind(this),2000);
 
   setInterval(function(){
-    var newObject = new Component(50,40, "green", 800, 440, this.ctx, 0);
+    var newObject = new Component(40,70, "black", 800, 410, this.ctx, 0);
     this.obstacles.push(newObject);
-  }.bind(this),5000);
+  }.bind(this),2970);
 }
 
 Game.prototype.moveObject = function(object, velocidad){
@@ -54,7 +53,6 @@ Game.prototype.start = function() {
   this.background = new Component(800, 500, "#9DD9D2", 0, 0, this.ctx);
   this.piece = new Component(50, 90, "#23395B", 40, 390, this.ctx, -1.8);
   this.floor = new Component(800, 20, "#EE6055", 0, 480, this.ctx);
-  // this.obstacle = new Component(50,40, "black", 600, 440, this.ctx, 0);
   this.piece.gravity = 0.05;
   this.obstacleGenerator();
 }
@@ -127,6 +125,11 @@ this.obstacles.forEach(function(e, i){
   // this.obstacle.newPos();
   // this.obstacle.update();
   this.allObstacles();
+  this.counter++;
+  this.ctx.fillStyle = "#23395B";
+  this.ctx.font = "25px Arial";
+  this.ctx.fillText(Math.floor(this.counter / 5),20,30);
+
 
 }
 
@@ -141,10 +144,13 @@ Game.prototype.setupKeys = function () {
         console.log('38', this.piece.isJumping);
         if ( !this.piece.isJumping ) {
           console.log('inside if')
+          if(this.piece.y < 300){
+            return false;
+          }
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
           setTimeout(function(){
-            this.piece.gravity = 2.8;
+            this.piece.gravity = 2.1;
           }.bind(this), 250)
         }
         break;
