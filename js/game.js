@@ -13,7 +13,7 @@ function startGame() {
   context = canvas.getContext("2d");
   document.body.insertBefore(canvas, document.body.childNodes[0]);
   this.frameNo = 0;
-  var game = new Game(context);
+  var game = new Game(this.context, this.canvas.width, this.canvas.height);
   game.setupKeys();
   game.start();
 }
@@ -57,9 +57,9 @@ Game.prototype.start = function() {
   this.frameNo = 0;
   this.interval = setInterval(this.update.bind(this), 20);
   this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
-  this.piece = new Component(50, 90, "#23395B", 110, 390, this.ctx, -1.8);
+  this.piece = new Player(110, 390, this.ctx, -1.8);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
-  this.piece.gravity = 0.05;
+  this.piece.gravity = 1.05;
   this.obstacleGenerator();
 }
 
@@ -102,10 +102,10 @@ Game.prototype.allObstacles = function(){
 }
 
 Game.prototype.update = function () {
-this.obstacles.forEach(function(e, i){
-  if(this.crashWith(this.piece,this.obstacles[i])){
-    this.stopGameOver();
-  };
+  this.obstacles.forEach( function(e, i){
+    if(this.crashWith(this.piece,this.obstacles[i])){
+      this.stopGameOver();
+    };
 //   var velocidad = 9;
 //   var i=0;
 //   var intervalId = setInterval(function(){
@@ -118,7 +118,7 @@ this.obstacles.forEach(function(e, i){
 //   console.log("la velocidad es "+velocidad);
 //   }
 // },1000);
-}.bind(this));
+  }.bind(this));
 
 
   this.clear();
@@ -126,7 +126,7 @@ this.obstacles.forEach(function(e, i){
   this.floor.update();
   this.piece.hitBottom(canvas, this.piece, this.floor);
   this.piece.newPos();
-  this.piece.update();
+  this.piece.drawCharacter();
   // this.moveObject(this.obstacle);
   // this.obstacle.newPos();
   // this.obstacle.update();
@@ -136,8 +136,8 @@ this.obstacles.forEach(function(e, i){
     this.velocidad+=2;
     console.log(this.velocidad)};
   this.ctx.fillStyle = "#23395B";
-  this.ctx.font = "25px Arial";
-  this.ctx.fillText(Math.floor(this.counter / 5),20,30);
+  this.ctx.font = "25px PressStart2P";
+  this.ctx.fillText(Math.floor(this.counter / 5),40,60);
 
 
 }
@@ -153,13 +153,14 @@ Game.prototype.setupKeys = function () {
         console.log('38', this.piece.isJumping);
         if ( !this.piece.isJumping ) {
           console.log('inside if')
-          if(this.piece.y < 300){
+          if(this.piece.y < 100){
             return false;
           }
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
           setTimeout(function(){
             this.piece.gravity = 2.1;
+            this.piece.changeJump();
           }.bind(this), 250)
         }
         break;
@@ -168,13 +169,14 @@ Game.prototype.setupKeys = function () {
         console.log('32');
         if ( !this.piece.isJumping ) {
           console.log('inside if')
-          if(this.piece.y < 300){
+          if(this.piece.y < 100){
             return false;
           }
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
           setTimeout(function(){
             this.piece.gravity = 2.1;
+            this.piece.changeJump();
           }.bind(this), 250)
         }
         break;
