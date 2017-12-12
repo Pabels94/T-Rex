@@ -153,7 +153,7 @@ Game.prototype.setupKeys = function () {
         console.log('38', this.piece.isJumping);
         if ( !this.piece.isJumping ) {
           console.log('inside if')
-          if(this.piece.y < 100){
+          if(this.piece.y < 300){
             return false;
           }
           this.piece.gravity = -1.8;
@@ -169,7 +169,7 @@ Game.prototype.setupKeys = function () {
         console.log('32');
         if ( !this.piece.isJumping ) {
           console.log('inside if')
-          if(this.piece.y < 100){
+          if(this.piece.y < 300){
             return false;
           }
           this.piece.gravity = -1.8;
