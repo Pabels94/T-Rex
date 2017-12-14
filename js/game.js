@@ -136,8 +136,8 @@ Game.prototype.update = function () {
     this.velocidad+=2;
     console.log(this.velocidad)};
   this.ctx.fillStyle = "#23395B";
-  this.ctx.font = "25px PressStart2P";
-  this.ctx.fillText(Math.floor(this.counter / 5),40,60);
+  this.ctx.font = "18px PressStart2P";
+  this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),40,60);
 
 
 }
