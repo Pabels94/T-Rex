@@ -38,6 +38,7 @@ Player.prototype.drawCharacter = function () {
 Player.prototype.newPos = function () {
   this.gravitySpeed += this.gravity;
   this.y += this.speedY + this.gravitySpeed;
+  return this.y
 }
 
 Player.prototype.hitBottom = function (canvas, myGamePiece, myGameFloor ) {
@@ -50,5 +51,5 @@ Player.prototype.hitBottom = function (canvas, myGamePiece, myGameFloor ) {
 }
 
 Player.prototype.changeJump = function(){
-  
+
 }

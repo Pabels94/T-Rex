@@ -1,5 +1,6 @@
 var isPressed = false;
 var canvas;
+var start = true;
 
 
 $(document).ready(function(){
@@ -25,22 +26,18 @@ function Game (ctx, width, height) {
   this.background = null;
   this.piece = null;
   this.floor = null;
-  // this.obstacle = null;
   this.obstacles = [];
-  this.velocidad = 9;
+  this.velocidad = 12;
   this.counter = 0;
+  this.positionRandom = 0;
+  this.isPaused = false;
 }
 
 Game.prototype.obstacleGenerator = function(){
-  setInterval(function(){
-    var newObject = new Component(50,50, "black", 1420, 430, this.ctx, 0);
-    this.obstacles.push(newObject);
-  }.bind(this),2000);
 
-  setInterval(function(){
-    var newObject = new Component(40,70, "black", 1420, 410, this.ctx, 0);
-    this.obstacles.push(newObject);
-  }.bind(this),2970);
+    this.positionRandom = Math.floor(Math.random() * (4000 - 1492 + 1)+ 1492);
+
+    this.obstacles.push(new Component(50, 50, "black", this.positionRandom, 430, this.ctx, 0));
 }
 
 Game.prototype.moveObject = function(object, velocidad){
@@ -50,16 +47,15 @@ Game.prototype.moveObject = function(object, velocidad){
   //     this.velocidad += 1;
   // }.bind(this),5000);
   // console.log(this.velocidad);
-
 };
 
 Game.prototype.start = function() {
   this.frameNo = 0;
   this.interval = setInterval(this.update.bind(this), 20);
   this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
-  this.piece = new Player(110, 390, this.ctx, -1.8);
+  this.piece = new Player(110, 390, this.ctx, 1.05);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
-  this.piece.gravity = 1.05;
+  // this.piece.gravity = 1.05;
   this.obstacleGenerator();
 }
 
@@ -68,7 +64,6 @@ Game.prototype.clear = function() {
 }
 
 Game.prototype.stopGameOver = function() {
-  // console.log("stop", this.interval )
   clearInterval(this.interval);
 }
 
@@ -91,6 +86,10 @@ Game.prototype.crashWith = function(element1, element2){
         return crash;
 }
 
+Game.prototype.pauseGame = function(){
+  clearInterval(this.interval);
+}
+
 Game.prototype.allObstacles = function(){
   this.obstacles.forEach(function(e, i, array){
   e.update();
@@ -101,6 +100,17 @@ Game.prototype.allObstacles = function(){
 }.bind(this));
 }
 
+
+Game.prototype.randomControl = function () {
+
+  if(this.counter % 60 === 0){
+    this.obstacleGenerator();
+    if(this.obstacles.positionRandom === 1492)
+     this.obstacles.push(new Component);
+  };
+
+
+};
 Game.prototype.update = function () {
   this.obstacles.forEach( function(e, i){
     if(this.crashWith(this.piece,this.obstacles[i])){
@@ -127,18 +137,15 @@ Game.prototype.update = function () {
   this.piece.hitBottom(canvas, this.piece, this.floor);
   this.piece.newPos();
   this.piece.drawCharacter();
-  // this.moveObject(this.obstacle);
-  // this.obstacle.newPos();
-  // this.obstacle.update();
   this.allObstacles();
   this.counter++;
   if(this.counter%500 === 0){
     this.velocidad+=2;
-    console.log(this.velocidad)};
+  };
   this.ctx.fillStyle = "#23395B";
   this.ctx.font = "18px PressStart2P";
   this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),40,60);
-
+  this.randomControl();
 
 }
 
@@ -150,9 +157,7 @@ Game.prototype.setupKeys = function () {
   document.onkeyup  = function(e){
     switch (e.keyCode) {
       case 38:
-        console.log('38', this.piece.isJumping);
         if ( !this.piece.isJumping ) {
-          console.log('inside if')
           if(this.piece.y < 300){
             return false;
           }
@@ -166,12 +171,11 @@ Game.prototype.setupKeys = function () {
         break;
 
       case 32:
-        console.log('32');
         if ( !this.piece.isJumping ) {
-          console.log('inside if')
           if(this.piece.y < 300){
             return false;
           }
+
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
           setTimeout(function(){
@@ -180,6 +184,17 @@ Game.prototype.setupKeys = function () {
           }.bind(this), 250)
         }
         break;
+
+        case 80:
+          if(this.isPaused === true){
+            this.interval = setInterval(this.update.bind(this), 20);
+            this.isPaused = false;
+          }else{
+            this.pauseGame()
+            this.isPaused = true;
+          }
+
+          // alert('el juego está parado, pulsa ok para continuar ');
     }
   }.bind(this)
 };
