@@ -41,7 +41,7 @@ Game.prototype.obstacleGenerator = function(){
 
     this.positionRandom = Math.floor(Math.random() * (4000 - 1492 + 1)+ 1492);
 
-    this.obstacles.push(new Component(50, 50, "black", this.positionRandom, 430, this.ctx, 0));
+    this.obstacles.push(new Obstacle(50, 50, "computer-18.png", this.positionRandom, 430, this.ctx, 0, "image"));
 }
 
 Game.prototype.moveObject = function(object, velocidad){
