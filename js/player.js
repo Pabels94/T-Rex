@@ -28,7 +28,7 @@ Player.prototype.updateFrame = function () {
   this.intervalFrame = setInterval(function(){
     this.curFrame = ++this.curFrame % this.frameCount;
     this.srcX = this.curFrame * this.width;
-  }.bind(this), 200);
+  }.bind(this), 100);
 };
 
 Player.prototype.drawCharacter = function () {

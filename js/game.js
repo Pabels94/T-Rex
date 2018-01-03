@@ -3,6 +3,7 @@ var canvas;
 var start = true;
 
 
+
 $(document).ready(function(){
   startGame();
 })
@@ -31,7 +32,10 @@ function Game (ctx, width, height) {
   this.counter = 0;
   this.positionRandom = 0;
   this.isPaused = false;
+  this.myMusic = null;
+  this.mySound = null;
 }
+
 
 Game.prototype.obstacleGenerator = function(){
 
@@ -55,6 +59,9 @@ Game.prototype.start = function() {
   this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
   this.piece = new Player(110, 390, this.ctx, 1.05);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
+  this.myMusic = new Sound("song.mp3");
+  this.myMusic.play();
+  this.mySound = new Sound("salto.wav");
   // this.piece.gravity = 1.05;
   this.obstacleGenerator();
 }
@@ -64,6 +71,9 @@ Game.prototype.clear = function() {
 }
 
 Game.prototype.stopGameOver = function() {
+  // this.ctx.fillStyle = "#23395B";
+  // this.ctx.font = "20px PressStart2P";
+  // this.ctx.fillText("GAME OVER",140,160);
   clearInterval(this.interval);
 }
 
@@ -115,19 +125,8 @@ Game.prototype.update = function () {
   this.obstacles.forEach( function(e, i){
     if(this.crashWith(this.piece,this.obstacles[i])){
       this.stopGameOver();
+      this.myMusic.stop();
     };
-//   var velocidad = 9;
-//   var i=0;
-//   var intervalId = setInterval(function(){
-//   console.log(i);
-//   i++;
-//
-//   if(i %10 === 0){
-//     // clearInterval(intervalId);
-//   velocidad += 2;
-//   console.log("la velocidad es "+velocidad);
-//   }
-// },1000);
   }.bind(this));
 
 
@@ -163,6 +162,7 @@ Game.prototype.setupKeys = function () {
           }
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
+          this.mySound.play();
           setTimeout(function(){
             this.piece.gravity = 2.1;
             this.piece.changeJump();
@@ -178,6 +178,7 @@ Game.prototype.setupKeys = function () {
 
           this.piece.gravity = -1.8;
           this.piece.isJumping = true;
+          this.mySound.play();
           setTimeout(function(){
             this.piece.gravity = 2.1;
             this.piece.changeJump();
