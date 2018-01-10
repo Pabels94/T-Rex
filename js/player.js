@@ -6,20 +6,20 @@ function Player(x, y ,ctx, gravity){
   this.isJumping = false;
   this.gravity = gravity;
   this.ctx = ctx;
-  this.spriteWidth = 574;
+  this.spriteWidth = 656;
   this.spriteHeight = 148;
   this.rows = 1;
-  this.cols = 7;
+  this.cols = 8;
   this.width = this.spriteWidth/this.cols;
   this.height = this.spriteHeight/this.rows;
   this.curFrame = 0;
-  this.frameCount = 7;
+  this.frameCount = 8;
   this.x = 100;
   this.y = 0;
   this.srcX = 0;
   this.srcY = 0;
   this.character = new Image();
-  this.character.src = "personaje.png";
+  this.character.src = "img/personaje.png";
   this.updateFrame();
 }
 

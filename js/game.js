@@ -32,8 +32,10 @@ function Game (ctx, width, height) {
   this.counter = 0;
   this.positionRandom = 0;
   this.isPaused = false;
-  this.myMusic = null;
+  this.myMusic = [];
   this.mySound = null;
+  this.myDead = null
+  this.jumps = 0;
 }
 
 
@@ -41,7 +43,7 @@ Game.prototype.obstacleGenerator = function(){
 
     this.positionRandom = Math.floor(Math.random() * (4000 - 1492 + 1)+ 1492);
 
-    this.obstacles.push(new Obstacle(50, 50, "computer-18.png", this.positionRandom, 430, this.ctx, 0, "image"));
+    this.obstacles.push(new Obstacle(50, 50, "img/computer-18.png", this.positionRandom, 430, this.ctx, 0, "image"));
 }
 
 Game.prototype.moveObject = function(object, velocidad){
@@ -59,9 +61,11 @@ Game.prototype.start = function() {
   this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
   this.piece = new Player(110, 390, this.ctx, 1.05);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
-  this.myMusic = new Sound("song.mp3");
+  this.myMusic = new Sound("sounds/song.3.mp3", "sounds/song.mp3", "sounds/song.2.mp3",  "sounds/song.4.mp3");
+  // var rand = this.myMusic[Math.floor(Math.random()* this.myMusic.length)].play();
   this.myMusic.play();
-  this.mySound = new Sound("salto.wav");
+  this.mySound = new Sound("sounds/salto.wav");
+  this.myDead = new Sound("sounds/game.over.mp4");
   // this.piece.gravity = 1.05;
   this.obstacleGenerator();
 }
@@ -125,7 +129,9 @@ Game.prototype.update = function () {
   this.obstacles.forEach( function(e, i){
     if(this.crashWith(this.piece,this.obstacles[i])){
       this.stopGameOver();
+      this.myDead.play();
       this.myMusic.stop();
+
     };
   }.bind(this));
 
@@ -146,6 +152,11 @@ Game.prototype.update = function () {
   this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),40,60);
   this.randomControl();
 
+  if(this.piece.y > 332){
+    this.jumps = 0;
+    console.log(this.jumps);
+  }
+
 }
 
 Game.prototype.accelerate = function (n) {
@@ -156,46 +167,59 @@ Game.prototype.setupKeys = function () {
   document.onkeyup  = function(e){
     switch (e.keyCode) {
       case 38:
-        if ( !this.piece.isJumping ) {
-          if(this.piece.y < 300){
-            return false;
-          }
-          this.piece.gravity = -1.8;
-          this.piece.isJumping = true;
-          this.mySound.play();
-          setTimeout(function(){
-            this.piece.gravity = 2.1;
-            this.piece.changeJump();
-          }.bind(this), 250)
-        }
+      if (this.jumps === 1) {
+        this.jumps = 2;
+        this.piece.gravity = -0.4;
+        this.mySound.play();
+        setTimeout(function () {
+          this.piece.gravity = 2.1;
+          this.piece.changeJump();
+        }.bind(this), 250);
+      }
+      if (this.jumps === 0) {
+        this.jumps = 1;
+        this.piece.gravity = -1.6;
+        this.mySound.play();
+        setTimeout(function () {
+          this.piece.gravity = 2.1;
+          this.piece.changeJump();
+        }.bind(this), 250);
+      }
+      console.log(this.jumps);
         break;
 
       case 32:
-        if ( !this.piece.isJumping ) {
-          if(this.piece.y < 300){
-            return false;
-          }
-
-          this.piece.gravity = -1.8;
-          this.piece.isJumping = true;
-          this.mySound.play();
-          setTimeout(function(){
-            this.piece.gravity = 2.1;
-            this.piece.changeJump();
-          }.bind(this), 250)
-        }
+      if (this.jumps === 1) {
+        this.jumps = 2;
+        this.piece.gravity = -0.4;
+        this.mySound.play();
+        setTimeout(function () {
+          this.piece.gravity = 2.1;
+          this.piece.changeJump();
+        }.bind(this), 250);
+      }
+      if (this.jumps === 0) {
+        this.jumps = 1;
+        this.piece.gravity = -1.6;
+        this.mySound.play();
+        setTimeout(function () {
+          this.piece.gravity = 2.1;
+          this.piece.changeJump();
+        }.bind(this), 250);
+      }
+      console.log(this.jumps);
         break;
 
         case 80:
           if(this.isPaused === true){
+            this.myMusic.play();
             this.interval = setInterval(this.update.bind(this), 20);
             this.isPaused = false;
           }else{
             this.pauseGame()
+            this.myMusic.stop();
             this.isPaused = true;
           }
-
-          // alert('el juego está parado, pulsa ok para continuar ');
     }
   }.bind(this)
 };
