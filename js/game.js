@@ -55,7 +55,7 @@ Game.prototype.start = function() {
   this.interval = setInterval(this.update.bind(this), 20);
   this.piece = new Player(110, 390, this.ctx, 1.05);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
-  this.myMusic = new Sound("sounds/song.mp3", "sounds/song.4.mp3", "sounds/song.3.mp3", "sounds/song.2.mp3");
+  this.myMusic = new Sound("sounds/song.mp4");
   this.myMusic.play();
   this.mySound = new Sound("sounds/salto.wav");
   this.myDead = new Sound("sounds/game.over.mp4");
