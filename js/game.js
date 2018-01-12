@@ -33,12 +33,10 @@ function Game (ctx, width, height) {
   this.counter = 0;
   this.positionRandom = 0;
   this.isPaused = false;
-  this.myMusic = [];
   this.mySound = null;
   this.myDead = null
   this.jumps = 0;
   this.backgroundX = 0;
-
 }
 
 
@@ -51,26 +49,17 @@ Game.prototype.obstacleGenerator = function(){
 
 Game.prototype.moveObject = function(object, velocidad){
   object.x -= this.velocidad;
-
-  // setInterval(function(){
-  //     this.velocidad += 1;
-  // }.bind(this),5000);
-  // console.log(this.velocidad);
-  // AAAAAAAAAA
 };
 
 Game.prototype.start = function() {
   this.frameNo = 0;
   this.interval = setInterval(this.update.bind(this), 20);
-  // this.background = new Component(1420, 500, "#9DD9D2", 0, 0, this.ctx);
   this.piece = new Player(110, 390, this.ctx, 1.05);
   this.floor = new Component(1420, 20, "#EE6055", 0, 480, this.ctx);
   this.myMusic = new Sound("sounds/song.mp3", "sounds/song.4.mp3", "sounds/song.3.mp3", "sounds/song.2.mp3");
-  // var rand = this.myMusic[Math.floor(Math.random()* this.myMusic.length)].play();
   this.myMusic.play();
   this.mySound = new Sound("sounds/salto.wav");
   this.myDead = new Sound("sounds/game.over.mp4");
-  // this.piece.gravity = 1.05;
   this.obstacleGenerator();
   this.moveBackground();
 }
@@ -80,9 +69,6 @@ Game.prototype.clear = function() {
 }
 
 Game.prototype.stopGameOver = function() {
-  // this.ctx.fillStyle = "#23395B";
-  // this.ctx.font = "20px PressStart2P";
-  // this.ctx.fillText("GAME OVER",140,160);
   clearInterval(this.interval);
 }
 
@@ -113,12 +99,11 @@ Game.prototype.allObstacles = function(){
   this.obstacles.forEach(function(e, i, array){
   e.update();
   this.moveObject(e,this.velocidad);
-  if (e.x <= -40) {
+  if (e.x <= -30) {
     array.splice(i,1);
   }
 }.bind(this));
 }
-
 
 Game.prototype.randomControl = function () {
 
@@ -127,11 +112,7 @@ Game.prototype.randomControl = function () {
     if(this.obstacles.positionRandom === 1492)
      this.obstacles.push(new Component);
   };
-
 };
-
-
-
 
 Game.prototype.update = function () {
   this.obstacles.forEach( function(e, i){
@@ -139,14 +120,12 @@ Game.prototype.update = function () {
       this.stopGameOver();
       this.myDead.play();
       this.myMusic.stop();
-
     };
   }.bind(this));
 
 
   this.clear();
   this.ctx.drawImage(this.background, this.backgroundX, 0, 1420, 500, 0, 0, 1420, 500);
-  // this.background.update();
   this.floor.update();
   this.piece.hitBottom(canvas, this.piece, this.floor);
   this.piece.newPos();
@@ -158,14 +137,23 @@ Game.prototype.update = function () {
   };
   this.ctx.fillStyle = "#23395B";
   this.ctx.font = "18px PressStart2P";
-  this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),1200,60);
+  this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),1210,60);
   this.randomControl();
+
+  this.ctx.globalAlpha = 0.2;
+  this.ctx.fillRect(1195,27,200,50);
+  this.ctx.globalAlpha = 1.0;
+
+  this.ctx.rect(1195,27,200,50);
+  this.ctx.strokeStyle = "#23395B";
+  this.ctx.lineWidth = "3";
+  this.ctx.stroke();
+
 
 
 
   if(this.piece.y > 332){
     this.jumps = 0;
-    console.log(this.jumps);
   }
 
 }
@@ -175,10 +163,14 @@ Game.prototype.accelerate = function (n) {
 }
 
 Game.prototype.moveBackground = function () {
+
   this.intervalBackground = setInterval(function() {
-    this.backgroundX++
-  }.bind(this),10
-  )
+    this.backgroundX++;
+    if (this.backgroundX > 10813){
+      this.backgroundX = 1420;
+    }
+  }.bind(this),5
+)
 
 }
 
