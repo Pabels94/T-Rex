@@ -40,6 +40,8 @@ function Game (ctx, width, height) {
 }
 
 
+
+
 Game.prototype.obstacleGenerator = function(){
 
     this.positionRandom = Math.floor(Math.random() * (4000 - 1492 + 1)+ 1492);
@@ -140,6 +142,7 @@ Game.prototype.update = function () {
   this.ctx.fillText("Score:" + " " + Math.floor(this.counter / 5),1210,60);
   this.randomControl();
 
+
   this.ctx.globalAlpha = 0.2;
   this.ctx.fillRect(1195,27,200,50);
   this.ctx.globalAlpha = 1.0;
@@ -148,7 +151,6 @@ Game.prototype.update = function () {
   this.ctx.strokeStyle = "#23395B";
   this.ctx.lineWidth = "3";
   this.ctx.stroke();
-
 
 
 

@@ -49,3 +49,7 @@ Player.prototype.hitBottom = function (canvas, myGamePiece, myGameFloor ) {
     this.isJumping = false;
   }
 }
+
+Player.prototype.changeJump = function(){
+
+}
