@@ -39,9 +39,6 @@ function Game (ctx, width, height) {
   this.backgroundX = 0;
 }
 
-
-
-
 Game.prototype.obstacleGenerator = function(){
 
     this.positionRandom = Math.floor(Math.random() * (4000 - 1492 + 1)+ 1492);
@@ -76,13 +73,13 @@ Game.prototype.stopGameOver = function() {
 
 Game.prototype.crashWith = function(element1, element2){
   var myleft = element1.x;
-        var myright = element1.x + (element1.width);
+        var myright = element1.x + (element1.width - 30);
         var mytop = element1.y;
-        var mybottom = element1.y + (element1.height);
+        var mybottom = element1.y + (element1.height -30);
         var otherleft = element2.x;
-        var otherright = element2.x + (element2.width);
+        var otherright = element2.x + (element2.width -30);
         var othertop = element2.y;
-        var otherbottom = element2.y + (element2.height);
+        var otherbottom = element2.y + (element2.height -30);
         var crash = true;
         if ((mybottom < othertop) ||
                (mytop > otherbottom) ||
@@ -118,7 +115,7 @@ Game.prototype.randomControl = function () {
 
 Game.prototype.update = function () {
   this.obstacles.forEach( function(e, i){
-    if(this.crashWith(this.piece,this.obstacles[i])){
+    if(this.crashWith(this.piece, this.obstacles[i])){
       this.stopGameOver();
       this.myDead.play();
       this.myMusic.stop();
@@ -143,14 +140,14 @@ Game.prototype.update = function () {
   this.randomControl();
 
 
-  this.ctx.globalAlpha = 0.2;
-  this.ctx.fillRect(1195,27,200,50);
-  this.ctx.globalAlpha = 1.0;
-
-  this.ctx.rect(1195,27,200,50);
-  this.ctx.strokeStyle = "#23395B";
-  this.ctx.lineWidth = "3";
-  this.ctx.stroke();
+  // this.ctx.globalAlpha = 0.2;
+  // this.ctx.fillRect(1195,27,200,50);
+  // this.ctx.globalAlpha = 1.0;
+  //
+  // this.ctx.rect(1195,27,200,50);
+  // this.ctx.strokeStyle = "#23395B";
+  // this.ctx.lineWidth = "3";
+  // this.ctx.stroke();
 
 
 
